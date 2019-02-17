@@ -1,4 +1,17 @@
 /*
+ * Install the service worker
+ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js', {'scope': '.'}).then(function (registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            console.error('ServiceWorker registration failed: ', err);
+        });
+    });
+}
+
+/*
  * What files to cache
  */
 var CACHE_NAME = 'pwaNotify-cache-v1';
