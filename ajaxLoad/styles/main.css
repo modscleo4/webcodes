@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#progressBar {
+    position: fixed;
+    top: 4px;
+    left: 0;
+    transform: translate(-50%, -50%);
+
+    max-width: 100%;
+    width: 0;
+    height: 8px;
+    background: #078807;
+
+    animation-direction: alternate;
+    animation-duration: 0.75s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+}
+
+@keyframes progressBouncing {
+    0% {
+        left: 0;
+        width: 40px;
+        background: #078807;
+    }
+
+    50% {
+        top: 0;
+        left: 50%;
+        width: 80px;
+        height: 16px;
+        background: #782ab0;
+    }
+
+    100% {
+        left: 100%;
+        right: 0;
+        width: 40px;
+        background: #38bfcf;
+    }
+}

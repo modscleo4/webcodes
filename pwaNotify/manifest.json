@@ -1,0 +1,26 @@
+{
+    "short_name": "PWA Notification Example",
+    "name": "A Example of a PWA app with Push notifications",
+    "icons": [
+    {
+        "src": "icons/launcher-icon-1x.png",
+        "type": "image/png",
+        "sizes": "48x48"
+    },
+    {
+        "src": "icons/launcher-icon-2x.png",
+        "type": "image/png",
+        "sizes": "96x96"
+    },
+    {
+        "src": "icons/launcher-icon-4x.png",
+        "type": "image/png",
+        "sizes": "192x192"
+    }
+    ],
+    "start_url": "index.html?launcher=true",
+
+    "background_color": "#2196F3",
+    "theme_color": "#2196F3",
+    "display": "standalone"
+}
