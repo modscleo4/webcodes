@@ -3,7 +3,7 @@
  */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js', {'scope': '.'}).then(function (registration) {
+        navigator.serviceWorker.register('./sw.js', {'scope': '.'}).then(function (registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }, function (err) {
             console.error('ServiceWorker registration failed: ', err);
@@ -16,10 +16,10 @@ if ('serviceWorker' in navigator) {
  */
 var CACHE_NAME = 'pwaNotify-cache-v1';
 var urlsToCache = [
-    '/',
-    '/res/notification-icon.png',
-    '/styles/main.css',
-    '/scripts/main.js'
+    './',
+    './res/notification-icon.png',
+    './styles/main.css',
+    './scripts/main.js'
 ];
 
 /*
