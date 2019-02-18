@@ -3,12 +3,12 @@ function checkStatus() {
         alert("This browser does not support system notifications");
     } else if (Notification.permission === "granted") {
         // Notify the user
-        notify('PWA Notification Example', 'Hello again!');
+        notify('PWA Notification Example', 'Cirurgia de morfose');
     } else if (Notification.permission !== 'denied') {
         Notification.requestPermission(function (permission) {
             if (permission === "granted") {
                 // Notify the user
-                notify('PWA Notification Example', 'Hello there!');
+                notify('PWA Notification Example', 'Esfiha de chocolate');
             }
         });
     }
