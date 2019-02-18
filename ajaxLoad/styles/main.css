@@ -5,20 +5,37 @@ body {
 
 #progressBar {
     position: fixed;
-    top: 4px;
     left: 0;
-    transform: translate(-50%, -50%);
 
     max-width: 100%;
-    width: 0;
     height: 8px;
     background: #078807;
+}
 
+.progressBouncing {
+    top: 4px;
+    transform: translate(-50%, -50%);
+    width: 40px;
+
+    animation-name: progressBouncing;
     animation-direction: alternate;
     animation-duration: 0.75s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
+}
+
+.progressContinuous {
+    top: 0;
+    width: 0;
+    transition: 0.25s;
+
+    animation-name: progressContinuous;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+    animation-duration: 0.75s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
 
 @keyframes progressBouncing {
@@ -40,6 +57,20 @@ body {
         left: 100%;
         right: 0;
         width: 40px;
+        background: #38bfcf;
+    }
+}
+
+@keyframes progressContinuous {
+    0% {
+        background: #078807;
+    }
+
+    50% {
+        background: #782ab0;
+    }
+
+    100% {
         background: #38bfcf;
     }
 }

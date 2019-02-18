@@ -1,39 +1,43 @@
 function loadPage(page) {
     let progressBar = document.getElementById('progressBar');
-    let lengthComputable;
     let xhttp = new XMLHttpRequest();
 
+    if (xhttp.lengthComputable) {
+        progressBar.classList.add('progressContinuous');
+    }
+
     xhttp.addEventListener('progress', function (event) {
-        lengthComputable = event.lengthComputable;
         if (event.lengthComputable) {
             let percent = event.loaded / event.total;
-            progressBar.style.width = parseInt(getComputedStyle(progressBar).maxWidth) * percent + "px";
+            progressBar.style.width = parseInt(getComputedStyle(progressBar).maxWidth) * percent + "%";
         } else {
             // There is no information about total size
-            progressBar.style.animationName = 'progressBouncing';
+            progressBar.classList.add('progressBouncing');
         }
     }, false);
 
     xhttp.addEventListener('load', function (event) {
-        if (lengthComputable) {
+        if (xhttp.lengthComputable) {
             let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
 
             window.history.pushState('Object', htmlDoc.head.title, page);
             document.head.innerHTML = htmlDoc.head.innerHTML;
             document.body = htmlDoc.body;
+
+            window.location.reload(false); // Make sure the JS will reload
         } else {
             progressBar.style.animationIterationCount = '1';
 
             progressBar.addEventListener('animationend', function () {
-                if (progressBar.style.animationName != '') {
-                    progressBar.style.animationName == '';
-                }
+                progressBar.classList.remove('progressBouncing');
 
                 let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
 
                 window.history.pushState('Object', htmlDoc.head.title, page);
                 document.head.innerHTML = htmlDoc.head.innerHTML;
                 document.body = htmlDoc.body;
+
+                window.location.reload(false); // Make sure the JS will reload
             });
         }
     }, false);
@@ -52,10 +56,11 @@ function loadPage(page) {
 }
 
 window.addEventListener('load', function () {
-    for (let i = 0; i < document.getElementsByTagName('a').length; i++) {
-        document.getElementsByTagName('a')[i].onclick = function (e) {
+    let a = document.getElementsByTagName('a');
+    for (let i = 0; i < a.length; i++) {
+        a[i].onclick = function (e) {
             let link = document.getElementsByTagName('a')[i].href;
-            if (document.location.host === document.getElementsByTagName('a')[i].host) {
+            if (document.location.host === a[i].host) {
                 loadPage(link);
 
                 e.preventDefault();
