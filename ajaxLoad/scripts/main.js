@@ -1,13 +1,14 @@
 function loadPage(page) {
     let progressBar = document.getElementById('progressBar');
+    let lengthComputable;
     let xhttp = new XMLHttpRequest();
 
-    if (xhttp.lengthComputable) {
-        progressBar.classList.add('progressContinuous');
-    }
-
     xhttp.addEventListener('progress', function (event) {
-        if (event.lengthComputable) {
+        lengthComputable = event.lengthComputable;
+
+        if (lengthComputable) {
+            progressBar.classList.add('progressContinuous');
+
             let percent = event.loaded / event.total * 100;
             progressBar.style.width = percent + "%";
         } else {
@@ -27,7 +28,7 @@ function loadPage(page) {
             window.location.reload(false); // Make sure the JS will reload
         }
 
-        if (xhttp.lengthComputable) {
+        if (lengthComputable) {
             load();
         } else {
             progressBar.style.animationIterationCount = '1';
