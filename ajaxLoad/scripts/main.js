@@ -8,8 +8,8 @@ function loadPage(page) {
 
     xhttp.addEventListener('progress', function (event) {
         if (event.lengthComputable) {
-            let percent = event.loaded / event.total;
-            progressBar.style.width = parseInt(getComputedStyle(progressBar).maxWidth) * percent + "%";
+            let percent = event.loaded / event.total * 100;
+            progressBar.style.width = percent + "%";
         } else {
             // There is no information about total size
             progressBar.classList.add('progressBouncing');
@@ -17,27 +17,25 @@ function loadPage(page) {
     }, false);
 
     xhttp.addEventListener('load', function (event) {
-        if (xhttp.lengthComputable) {
-            let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
+        let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
 
+        function load() {
             window.history.pushState('Object', htmlDoc.head.title, page);
             document.head.innerHTML = htmlDoc.head.innerHTML;
             document.body = htmlDoc.body;
 
             window.location.reload(false); // Make sure the JS will reload
+        }
+
+        if (xhttp.lengthComputable) {
+            load();
         } else {
             progressBar.style.animationIterationCount = '1';
 
             progressBar.addEventListener('animationend', function () {
                 progressBar.classList.remove('progressBouncing');
 
-                let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
-
-                window.history.pushState('Object', htmlDoc.head.title, page);
-                document.head.innerHTML = htmlDoc.head.innerHTML;
-                document.body = htmlDoc.body;
-
-                window.location.reload(false); // Make sure the JS will reload
+                load();
             });
         }
     }, false);
