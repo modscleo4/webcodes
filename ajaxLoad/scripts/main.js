@@ -3,7 +3,7 @@ function loadPage(page) {
     let lengthComputable;
     let xhttp = new XMLHttpRequest();
 
-    xhttp.addEventListener('progress', function (event) {
+    xhttp.addEventListener('progress', (event) => {
         lengthComputable = event.lengthComputable;
 
         if (lengthComputable) {
@@ -17,7 +17,7 @@ function loadPage(page) {
         }
     }, false);
 
-    xhttp.addEventListener('load', function (event) {
+    xhttp.addEventListener('load', (event) => {
         let htmlDoc = new DOMParser().parseFromString(xhttp.responseText, 'text/html');
 
         function load() {
@@ -29,11 +29,11 @@ function loadPage(page) {
         }
 
         if (lengthComputable) {
-            load();
+            setTimeout(() => { load() }, 750);
         } else {
             progressBar.style.animationIterationCount = '1';
 
-            progressBar.addEventListener('animationend', function () {
+            progressBar.addEventListener('animationend', () => {
                 progressBar.classList.remove('progressBouncing');
 
                 load();
@@ -41,11 +41,11 @@ function loadPage(page) {
         }
     }, false);
 
-    xhttp.addEventListener('error', function (event) {
+    xhttp.addEventListener('error', (event) => {
         console.error('An error occoured during the AJAX request');
     }, false);
 
-    xhttp.addEventListener('abort', function (event) {
+    xhttp.addEventListener('abort', (event) => {
         console.log('Transfer aborted');
     }, false);
 
@@ -54,17 +54,17 @@ function loadPage(page) {
     xhttp.send();
 }
 
-window.addEventListener('load', function () {
+window.addEventListener('load', () => {
     let a = document.getElementsByTagName('a');
     for (let i = 0; i < a.length; i++) {
-        a[i].onclick = function (e) {
-            let link = document.getElementsByTagName('a')[i].href;
+        a[i].addEventListener('click', (e) => {
+            let link = a[i].href;
             if (document.location.host === a[i].host) {
                 loadPage(link);
 
                 e.preventDefault();
                 return false;
             }
-        };
+        });
     }
 });

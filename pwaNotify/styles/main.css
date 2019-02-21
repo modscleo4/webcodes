@@ -1,0 +1,4 @@
+/* Standalone is when the PWA is running in a window (started from launcher) */
+@media all and (display-mode: standalone) {
+
+}
