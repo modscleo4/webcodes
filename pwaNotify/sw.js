@@ -1,4 +1,16 @@
-/*
+/**
+ * Service Worker runs even if the page is not open
+ * Here is where the sincronization and push notifications should be
+ */
+
+function notify(title, body, icon = 'res/notification-icon.png') {
+    if (Notification.permission === "granted") {
+        // Do not request permissions here, use checkStatus() at window.onload
+        self.registration.showNotification(title, {body: body, icon: icon});
+    }
+}
+
+/**
  * Install the service worker
  */
 if ('serviceWorker' in navigator) {
@@ -11,7 +23,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-/*
+/**
  * What files to cache
  */
 var CACHE_NAME = 'pwaNotify-cache-v1';
@@ -22,7 +34,7 @@ var urlsToCache = [
     './scripts/main.js'
 ];
 
-/*
+/**
  * Cache the files
  */
 self.addEventListener('install', function (event) {
@@ -34,7 +46,7 @@ self.addEventListener('install', function (event) {
     );
 });
 
-/*
+/**
  * Get the cached files
  */
 self.addEventListener('fetch', function (event) {
@@ -62,7 +74,7 @@ self.addEventListener('fetch', function (event) {
     );
 });
 
-/*
+/**
  * Delete the old versions on update
  */
 self.addEventListener('activate', function (event) {
@@ -78,5 +90,32 @@ self.addEventListener('activate', function (event) {
                 })
             );
         })
+    );
+});
+
+self.addEventListener('sync', event => {
+    if (event.tag === 'syncTest') {
+        setTimeout(() => {
+            notify('PWA Notification Example', 'Rabiot Games');
+        }, 1000);
+    }
+});
+
+self.addEventListener('push', function(event) {
+    console.log('[Service Worker] Push Received.');
+    console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
+
+    event.waitUntil(
+        notify('PWA Notification Example', event.data.text())
+    );
+});
+
+self.addEventListener('notificationclick', function(event) {
+    console.log('[Service Worker] Notification click Received.');
+
+    event.notification.close();
+
+    event.waitUntil(
+
     );
 });
