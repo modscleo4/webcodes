@@ -1,33 +1,28 @@
 /**
- * Service Worker runs even if the page is not open
- * Here is where the sincronization and push notifications should be
- */
+ * Copyright 2019 Dhiego Cassiano Fogaça Barbosa
 
-function notify(title, body, icon = 'res/notification-icon.png') {
-    if (Notification.permission === "granted") {
-        // Do not request permissions here, use checkStatus() at window.onload
-        self.registration.showNotification(title, {body: body, icon: icon});
-    }
-}
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
 
-/**
- * Install the service worker
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @file Service Worker runs even if the page is not open, handling background sync and push notifications.
+ *
+ * @author Dhiego Cassiano Fogaça Barbosa <modscleo4@outlook.com>
  */
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js', {'scope': '.'}).then(function (registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function (err) {
-            console.error('ServiceWorker registration failed: ', err);
-        });
-    });
-}
 
 /**
  * What files to cache
  */
-var CACHE_NAME = 'pwaNotify-cache-v1';
-var urlsToCache = [
+const CACHE_NAME = 'pwaNotify-cache-v1';
+const urlsToCache = [
     './',
     './res/notification-icon.png',
     './styles/main.css',
@@ -37,9 +32,9 @@ var urlsToCache = [
 /**
  * Cache the files
  */
-self.addEventListener('install', function (event) {
+self.addEventListener('install', event => {
     event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
+        caches.open(CACHE_NAME).then(cache => {
             console.log('Opened cache');
             return cache.addAll(urlsToCache);
         })
@@ -49,21 +44,21 @@ self.addEventListener('install', function (event) {
 /**
  * Get the cached files
  */
-self.addEventListener('fetch', function (event) {
+self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(function (response) {
+        caches.match(event.request).then(response => {
             if (response) {
                 return response;
             }
-            var fetchRequest = event.request.clone();
+            let fetchRequest = event.request.clone();
 
-            return fetch(fetchRequest).then(function (response) {
+            return fetch(fetchRequest).then(response => {
                     if (!response || response.status !== 200 || response.type !== 'basic') {
                         return response;
                     }
-                    var responseToCache = response.clone();
+                    let responseToCache = response.clone();
 
-                    caches.open(CACHE_NAME).then(function (cache) {
+                    caches.open(CACHE_NAME).then(cache => {
                         cache.put(event.request, responseToCache);
                     });
 
@@ -77,13 +72,13 @@ self.addEventListener('fetch', function (event) {
 /**
  * Delete the old versions on update
  */
-self.addEventListener('activate', function (event) {
-    var cacheWhitelist = ['pwaNotify-cache-v1'];
+self.addEventListener('activate', event => {
+    let cacheWhitelist = ['pwaNotify-cache-v1'];
 
     event.waitUntil(
-        caches.keys().then(function (cacheNames) {
+        caches.keys().then(cacheNames => {
             return Promise.all(
-                cacheNames.map(function (cacheName) {
+                cacheNames.map(cacheName => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         return caches.delete(cacheName);
                     }
@@ -94,28 +89,37 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('sync', event => {
-    if (event.tag === 'syncTest') {
-        setTimeout(() => {
-            notify('PWA Notification Example', 'Rabiot Games');
-        }, 1000);
-    }
-});
-
-self.addEventListener('push', function(event) {
-    console.log('[Service Worker] Push Received.');
-    console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
-
     event.waitUntil(
-        notify('PWA Notification Example', event.data.text())
+        console.log(`[Service Worker] received sync request '${event.tag}'`)
     );
 });
 
-self.addEventListener('notificationclick', function(event) {
-    console.log('[Service Worker] Notification click Received.');
+self.addEventListener('push', event => {
+    console.log('[Service Worker] Push received.');
+    console.log(`[Service Worker] Push had this data: '${event.data.text()}'`);
+
+    let title = 'PWA Notification Example';
+    let body = event.data.text();
+    let icon = 'res/notification-icon.png';
+
+    event.waitUntil(self.registration.showNotification(title, {body: body, icon: icon}));
+});
+
+self.addEventListener('notificationclick', event => {
+    console.log(`[Service Worker] Notification click received. Notification tag: ${event.notification.tag}`);
 
     event.notification.close();
 
-    event.waitUntil(
-
-    );
+    // Check if the user is in the tab, and focus it if so
+    event.waitUntil(self.clients.matchAll({
+        type: "window"
+    }).then(clientList => {
+        clientList.forEach(client => {
+            if (client.url === '/' && 'focus' in client) {
+                return client.focus();
+            } else if (clients.openWindow) {
+                return clients.openWindow('/');
+            }
+        });
+    }));
 });

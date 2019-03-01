@@ -18,7 +18,7 @@
         "sizes": "192x192"
     }
     ],
-    "start_url": "./?launcher=true",
+    "start_url": "./?utm_source=launcher",
 
     "background_color": "#2196F3",
     "theme_color": "#2196F3",
