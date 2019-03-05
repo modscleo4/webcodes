@@ -47,17 +47,32 @@ window.addEventListener('load', () => {
             registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: applicationServerKey
-            }).then(function (subscription) {
-                console.log('User is subscribed:', subscription);
+            }).then(subscription => {
+                console.log('User is subscribed: ', subscription);
 
                 updateSubscriptionOnServer(subscription);
 
                 pushSubscription = true;
-
-                updatePushButton();
-            }).catch(function (err) {
+            }).catch(err => {
                 console.log('Failed to subscribe the user: ', err);
+            }).finally(() => {
                 updatePushButton();
+            });
+        });
+    }
+
+    function unsubscribeUser() {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.pushManager.getSubscription().then(subscription => {
+                subscription.unsubscribe().then(successful => {
+                    pushSubscription = false;
+
+                    console.log('User is unsubscribed: ', subscription);
+                }).catch(err => {
+                    console.log('Failed to unsubscribe the user: ', err);
+                }).finally(() => {
+                    updatePushButton();
+                })
             });
         });
     }
@@ -90,7 +105,7 @@ window.addEventListener('load', () => {
         btnSubscribePush.disabled = true;
 
         if (pushSubscription) {
-            // @todo: Unsubscribe user
+            unsubscribeUser();
         } else {
             subscribeUser();
         }

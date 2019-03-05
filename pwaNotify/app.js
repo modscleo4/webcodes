@@ -58,7 +58,6 @@ function urlB64ToUint8Array(base64String) {
  * Check the current notification permission status
  */
 function checkStatus() {
-    // Check notification status
     if (!('Notification' in window)) {
         console.log("This browser does not support system notifications");
     } else if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
